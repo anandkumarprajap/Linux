@@ -884,9 +884,13 @@ whoami
 
 # Linux User Home Directories and /etc/passwd
 
-## Screenshot
+## Screenshot 1
 
-![Linux User Directories and passwd File](4(5).png)
+![Linux User Directories and passwd File](4.png)
+
+## Screenshot 2
+
+![Linux User Directories and passwd File](5.png)
 
 ---
 
@@ -1248,7 +1252,6 @@ grep "/home" /etc/passwd
 * `grep "/home" /etc/passwd` shows regular user accounts.
 
 ////////////////////////////////////////////////////////////////////////////////////
-
 ## Screenshot
 
 ![Linux User Directories and passwd File](6.png)
@@ -1552,9 +1555,41 @@ su - yalina
 
 # Linux User and Group Management Notes
 
-## Screenshot
+## Screenshot 7
 
-![Linux User and Group Management](7\(8\)(9\)(10\)(11\)(12\)(13\)(14\)(15\).png)
+![Linux User and Group Management](7.png)
+
+## Screenshot 8
+
+![Linux User and Group Management](8.png)
+
+## Screenshot 9
+
+![Linux User and Group Management](9.png)
+
+## Screenshot 10
+
+![Linux User and Group Management](10.png)
+
+## Screenshot 11
+
+![Linux User and Group Management](11.png)
+
+## Screenshot 12
+
+![Linux User and Group Management](12.png)
+
+## Screenshot 13
+
+![Linux User and Group Management](13.png)
+
+## Screenshot 14
+
+![Linux User and Group Management](14.png)
+
+## Screenshot 15
+
+![Linux User and Group Management](15.png)
 
 ## 1. Why `adduser` Failed
 
