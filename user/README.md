@@ -886,7 +886,7 @@ whoami
 
 ## Screenshot
 
-![Linux User Directories and passwd File](4\(5\).png)
+![Linux User Directories and passwd File](4(5).png)
 
 ---
 
