@@ -1,3 +1,502 @@
+# Linux Root User, sudo, and Directory Permissions
+
+## Screenshot
+
+![Linux Root User and Permissions](1.1.png)
+
+---
+
+## Understanding `/` vs `/root`
+
+Many beginners confuse:
+
+```text
+/
+```
+
+with
+
+```text
+/root
+```
+
+They are different:
+
+| Path    | Meaning                         |
+| ------- | ------------------------------- |
+| `/`     | Root of the filesystem          |
+| `/root` | Home directory of the root user |
+
+---
+
+## 1. Check Current User
+
+Command:
+
+```bash
+whoami
+```
+
+Output:
+
+```text
+ubuntu
+```
+
+### Meaning
+
+You are logged in as the `ubuntu` user, not as the root user.
+
+Example:
+
+```bash
+ubuntu@server:~$ whoami
+ubuntu
+```
+
+---
+
+## 2. Become Root User
+
+Command:
+
+```bash
+sudo su
+```
+
+### Meaning
+
+| Part    | Purpose                                   |
+| ------- | ----------------------------------------- |
+| sudo    | Run command with administrator privileges |
+| su      | Switch user                               |
+| sudo su | Switch to the root user                   |
+
+Example:
+
+```bash
+ubuntu@server:~$ sudo su
+root@server:/home/ubuntu#
+```
+
+Notice:
+
+```text
+ubuntu@
+```
+
+changes to
+
+```text
+root@
+```
+
+You now have root privileges.
+
+---
+
+## 3. Exit Root User
+
+Command:
+
+```bash
+exit
+```
+
+Output:
+
+```text
+exit
+```
+
+Prompt changes from:
+
+```text
+root@server#
+```
+
+to
+
+```text
+ubuntu@server$
+```
+
+Meaning:
+
+You have left the root shell and returned to the ubuntu user.
+
+---
+
+## 4. List Files
+
+Command:
+
+```bash
+ls
+```
+
+Example Output:
+
+```text
+i-am-server-a
+server-b-key.pem
+```
+
+### Purpose
+
+Displays files and directories in the current location.
+
+---
+
+## 5. Go to the Filesystem Root
+
+Command:
+
+```bash
+cd /
+```
+
+### Purpose
+
+Move to the top-level directory of Linux.
+
+Example structure:
+
+```text
+/
+├── bin
+├── boot
+├── dev
+├── etc
+├── home
+├── root
+├── tmp
+├── usr
+└── var
+```
+
+Verify:
+
+```bash
+pwd
+```
+
+Output:
+
+```text
+/
+```
+
+---
+
+## 6. Why `cd root/` Failed
+
+Command:
+
+```bash
+cd root/
+```
+
+Output:
+
+```text
+Permission denied
+```
+
+### Reason
+
+You were inside:
+
+```text
+/
+```
+
+and Linux tried to enter:
+
+```text
+/root
+```
+
+The `/root` directory belongs only to the root user.
+
+Check permissions:
+
+```bash
+ls -ld /root
+```
+
+Example:
+
+```text
+drwx------ root root
+```
+
+Meaning:
+
+```text
+d      = directory
+rwx    = root has full access
+---    = group has no access
+---    = others have no access
+```
+
+Result:
+
+```text
+ubuntu user → Permission denied
+root user   → Access allowed
+```
+
+---
+
+## 7. Why `su root` Asked for a Password
+
+Command:
+
+```bash
+su root
+```
+
+Output:
+
+```text
+Password:
+```
+
+### Reason
+
+The `su` command requires the root account password.
+
+On AWS Ubuntu EC2 instances:
+
+* Root login is usually disabled.
+* Root password is typically locked.
+
+Result:
+
+```text
+Authentication failure
+```
+
+---
+
+## 8. Why `sudo su` Worked
+
+Command:
+
+```bash
+sudo su
+```
+
+### Reason
+
+The `ubuntu` user is granted sudo privileges.
+
+Authentication is performed using:
+
+* Your SSH private key
+* The sudo configuration
+
+Therefore:
+
+```text
+ubuntu → sudo su → root
+```
+
+works successfully.
+
+---
+
+## 9. Why `cat /etc/sudoers` Failed
+
+Command:
+
+```bash
+cat /etc/sudoers
+```
+
+Output:
+
+```text
+Permission denied
+```
+
+### Reason
+
+The file is protected.
+
+Normal users cannot read it.
+
+Correct:
+
+```bash
+sudo cat /etc/sudoers
+```
+
+or
+
+```bash
+sudo su
+cat /etc/sudoers
+```
+
+---
+
+## 10. Why `cd root/` Worked After `sudo su`
+
+Before:
+
+```bash
+whoami
+```
+
+Output:
+
+```text
+ubuntu
+```
+
+Access:
+
+```text
+/root → Permission denied
+```
+
+After:
+
+```bash
+sudo su
+```
+
+Check:
+
+```bash
+whoami
+```
+
+Output:
+
+```text
+root
+```
+
+Now:
+
+```bash
+cd /root
+```
+
+works successfully.
+
+---
+
+## Visual Flow
+
+```text
+Login via SSH
+       │
+       ▼
+    ubuntu
+       │
+       ├── cd /root
+       │      ❌ Permission denied
+       │
+       ▼
+   sudo su
+       │
+       ▼
+     root
+       │
+       ├── cd /root
+       │      ✅ Success
+       │
+       ▼
+      ls
+```
+
+---
+
+## Quick Revision Commands
+
+### Check Current User
+
+```bash
+whoami
+```
+
+### Become Root
+
+```bash
+sudo su
+```
+
+### Leave Root
+
+```bash
+exit
+```
+
+### Go to Filesystem Root
+
+```bash
+cd /
+```
+
+### Go to Root User Home
+
+```bash
+cd /root
+```
+
+### Show Files
+
+```bash
+ls
+```
+
+### Show Hidden Files
+
+```bash
+ls -la
+```
+
+### Check Directory Permissions
+
+```bash
+ls -ld /root
+```
+
+### Read Protected File
+
+```bash
+sudo cat /etc/sudoers
+```
+
+### Show Current Directory
+
+```bash
+pwd
+```
+
+Example Output:
+
+```text
+/
+```
+
+or
+
+```text
+/ root
+```
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 # Linux User Management Notes
 
 ## Screenshot
