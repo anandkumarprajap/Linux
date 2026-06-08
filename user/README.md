@@ -2,7 +2,7 @@
 
 ## Screenshot
 
-![Linux User Management](i.png)
+![Linux User Management ](1.png)
 
 ---
 
