@@ -725,3 +725,252 @@ sudo systemctl restart nginx
 * Opening Port 80 enables browser access to Nginx.
 * "Welcome to nginx!" confirms successful deployment.
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# Customizing the Nginx Default Web Page
+
+## Screenshot 22
+
+![Navigate to Nginx Web Root](22.png)
+
+## Screenshot 23
+
+![Check Nginx Default File](23.png)
+
+## Screenshot 24
+
+![Change Ownership and Edit HTML](24.png)
+
+## Screenshot 25
+
+![Custom Web Page in Browser](25.png)
+
+---
+
+# Objective
+
+Modify the default Nginx web page and display a custom message in the browser.
+
+---
+
+# 1. Go to Nginx Web Root Directory
+
+Command:
+
+```bash
+cd /var/www/html/
+```
+
+Check files:
+
+```bash
+ls
+```
+
+Output:
+
+```text
+index.nginx-debian.html
+```
+
+### Purpose
+
+`/var/www/html` is the default web root directory used by Nginx.
+
+---
+
+# 2. Check File Permissions
+
+Command:
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+-rw-r--r-- 1 root root 615 Jun 9 09:04 index.nginx-debian.html
+```
+
+### Meaning
+
+* Owner = root
+* Group = root
+* Normal users cannot modify the file.
+
+---
+
+# 3. Why Vim Could Not Edit the File
+
+Command:
+
+```bash
+vim index.nginx-debian.html
+```
+
+Problem:
+
+```text
+Permission denied
+```
+
+### Reason
+
+The file is owned by the root user.
+
+```text
+Owner: root
+Group: root
+```
+
+The `ubuntu` user does not have write permission.
+
+---
+
+# 4. Change File Ownership
+
+Command:
+
+```bash
+sudo chown ubuntu index.nginx-debian.html
+```
+
+Verify:
+
+```bash
+ls -l
+```
+
+Example:
+
+```text
+-rw-r--r-- 1 ubuntu root 615 Jun 9 09:04 index.nginx-debian.html
+```
+
+### Purpose
+
+Transfers ownership from `root` to `ubuntu`.
+
+Now the file can be edited without sudo.
+
+---
+
+# 5. Edit the Default Nginx Page
+
+Command:
+
+```bash
+vim index.nginx-debian.html
+```
+
+Replace the default content with:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to nginx!</title>
+</head>
+<body>
+    <h1>Welcome to Anand Kumar</h1>
+    <p><em>Thank you</em></p>
+</body>
+</html>
+```
+
+Save and exit Vim:
+
+```text
+ESC
+:wq
+```
+
+---
+
+# 6. Open the Website
+
+Copy the EC2 Public IPv4 address and open:
+
+```text
+http://52.89.27.77
+```
+
+(Use your instance IP address.)
+
+---
+
+# 7. Verify the Output
+
+Browser displays:
+
+```text
+Welcome to Anand Kumar
+
+Thank you
+```
+
+This confirms:
+
+✅ Nginx is running
+
+✅ Port 80 is open in the Security Group
+
+✅ HTML page was modified successfully
+
+✅ Browser can access the EC2 web server
+
+---
+
+# Architecture Flow
+
+```text
+Browser
+   │
+   ▼
+Public IP Address
+   │
+   ▼
+Security Group (Port 80 Open)
+   │
+   ▼
+EC2 Instance
+   │
+   ▼
+Nginx Web Server
+   │
+   ▼
+/var/www/html/index.nginx-debian.html
+   │
+   ▼
+Custom Web Page Displayed
+```
+
+---
+
+# Commands Summary
+
+```bash
+cd /var/www/html/
+
+ls
+
+ls -l
+
+sudo chown ubuntu index.nginx-debian.html
+
+vim index.nginx-debian.html
+```
+
+---
+
+# Key Learning
+
+* `/var/www/html` is the default Nginx web root directory.
+* `index.nginx-debian.html` is the default web page.
+* Root-owned files cannot be edited by normal users.
+* `chown` changes file ownership.
+* Vim is used to edit HTML files.
+* Nginx automatically serves files from `/var/www/html`.
+* Changes become visible when accessing the EC2 Public IP in a browser.
+
