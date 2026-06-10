@@ -974,3 +974,570 @@ vim index.nginx-debian.html
 * Nginx automatically serves files from `/var/www/html`.
 * Changes become visible when accessing the EC2 Public IP in a browser.
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# Removing Nginx from Ubuntu Server
+
+## Screenshot 26
+
+![Removing Nginx Package](26.png)
+
+---
+
+# Objective
+
+Remove the Nginx web server package from the Ubuntu system using the `apt purge` command.
+
+---
+
+# 1. Remove Nginx Package
+
+Command:
+
+```bash
+sudo apt purge nginx
+```
+
+### Purpose
+
+The `purge` command removes:
+
+* Nginx package
+* Configuration files
+* Package settings
+
+Unlike `remove`, `purge` also deletes configuration files.
+
+---
+
+# Output Analysis
+
+```text
+The following package was automatically installed and is no longer required:
+nginx-common
+
+Use 'sudo apt autoremove' to remove it.
+```
+
+### Meaning
+
+When Nginx was installed, Ubuntu automatically installed:
+
+```text
+nginx-common
+```
+
+Since Nginx is being removed, this package is no longer needed.
+
+---
+
+# Packages Being Removed
+
+Output:
+
+```text
+Removing:
+ nginx*
+```
+
+### Meaning
+
+The main Nginx package will be deleted from the system.
+
+---
+
+# Space Freed
+
+Output:
+
+```text
+Freed space: 1642 kB
+```
+
+### Meaning
+
+Disk space occupied by the Nginx package is released.
+
+---
+
+# Confirmation Prompt
+
+Output:
+
+```text
+Continue? [Y/n]
+```
+
+Response:
+
+```text
+y
+```
+
+Meaning:
+
+Proceed with the package removal.
+
+---
+
+# Package Removal Process
+
+Output:
+
+```text
+Removing nginx (1.28.3-2ubuntu1.4)
+```
+
+### Meaning
+
+Ubuntu is uninstalling the Nginx package from the system.
+
+---
+
+# Trigger Processing
+
+Output:
+
+```text
+Processing triggers for man-db
+```
+
+### Meaning
+
+Ubuntu updates related system documentation and package metadata after removal.
+
+---
+
+# Verify Nginx Removal
+
+Check:
+
+```bash
+which nginx
+```
+
+or
+
+```bash
+systemctl status nginx
+```
+
+Expected result:
+
+```text
+Unit nginx.service could not be found.
+```
+
+or
+
+```text
+nginx: command not found
+```
+
+---
+
+# Remove Unused Dependencies
+
+Ubuntu suggested:
+
+```bash
+sudo apt autoremove
+```
+
+Purpose:
+
+Remove unused packages such as:
+
+```text
+nginx-common
+```
+
+Command:
+
+```bash
+sudo apt autoremove -y
+```
+
+---
+
+# Difference Between Remove and Purge
+
+| Command               | Removes Package | Removes Configuration Files |
+| --------------------- | --------------- | --------------------------- |
+| sudo apt remove nginx | ✅ Yes           | ❌ No                        |
+| sudo apt purge nginx  | ✅ Yes           | ✅ Yes                       |
+
+---
+
+# Package Lifecycle
+
+```text
+Install Package
+      │
+      ▼
+sudo apt install nginx
+      │
+      ▼
+Start Service
+      │
+      ▼
+systemctl status nginx
+      │
+      ▼
+Use Nginx
+      │
+      ▼
+sudo apt purge nginx
+      │
+      ▼
+Nginx Removed
+      │
+      ▼
+sudo apt autoremove
+      │
+      ▼
+Unused Dependencies Removed
+```
+
+---
+
+# Commands Summary
+
+```bash
+sudo apt purge nginx
+
+sudo apt autoremove
+
+which nginx
+
+systemctl status nginx
+```
+
+---
+
+# Key Learning
+
+* `apt purge` removes both the package and its configuration files.
+* Ubuntu may leave dependency packages behind after removal.
+* `apt autoremove` cleans unused dependencies.
+* Purging Nginx removes the web server from the system.
+* Always verify removal using `which nginx` or `systemctl status nginx`.
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# Linux Hard Link vs Soft Link (Symbolic Link)
+
+## Screenshot 27
+
+![Hard Link and Soft Link Example](27.png)
+
+---
+
+# Objective
+
+Understand the difference between **Hard Links** and **Soft Links (Symbolic Links)** in Linux.
+
+---
+
+# 1. Original File
+
+Command:
+
+```bash
+cat hello.txt
+```
+
+Output:
+
+```text
+My name is Anand Kumar Prajapati
+Bokaro, Jharkhand
+```
+
+Check current directory:
+
+```bash
+pwd
+```
+
+Output:
+
+```text
+/home/ubuntu/devops
+```
+
+---
+
+# 2. Create a Soft Link
+
+Command:
+
+```bash
+ln -s /home/ubuntu/devops/hello.txt s-hello
+```
+
+### Meaning
+
+* `ln` = create link
+* `-s` = symbolic (soft) link
+* `s-hello` = shortcut pointing to hello.txt
+
+Verify:
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+lrwxrwxrwx 1 ubuntu ubuntu 29 Jun 10 07:17 s-hello -> /home/ubuntu/devops/hello.txt
+```
+
+Notice:
+
+```text
+l
+```
+
+at the beginning indicates a symbolic link.
+
+---
+
+# 3. Create a Hard Link
+
+Command:
+
+```bash
+ln /home/ubuntu/devops/hello.txt h-hello
+```
+
+Verify:
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+-rwxrwxrwx 2 yalina devops 54 Jun 10 07:08 h-hello
+-rwxrwxrwx 2 yalina devops 54 Jun 10 07:08 hello.txt
+```
+
+Notice:
+
+```text
+2
+```
+
+The link count becomes 2 because both names point to the same inode.
+
+---
+
+# 4. Directory Contents
+
+Command:
+
+```bash
+ls
+```
+
+Output:
+
+```text
+h-hello
+hello.txt
+s-hello
+```
+
+---
+
+# 5. Delete Original File
+
+Command:
+
+```bash
+rm hello.txt
+```
+
+Check:
+
+```bash
+ls
+```
+
+Output:
+
+```text
+h-hello
+s-hello
+```
+
+The original file name is removed.
+
+---
+
+# 6. Test Hard Link
+
+Command:
+
+```bash
+cat h-hello
+```
+
+Output:
+
+```text
+My name is Anand Kumar Prajapati
+Bokaro, Jharkhand
+```
+
+### Why It Works
+
+Hard links share the same inode and actual data.
+
+Even after deleting `hello.txt`, the data still exists because `h-hello` points directly to it.
+
+---
+
+# 7. Test Soft Link
+
+Command:
+
+```bash
+cat s-hello
+```
+
+Output:
+
+```text
+cat: s-hello: No such file or directory
+```
+
+### Why It Failed
+
+A soft link stores only the path of the original file.
+
+```text
+s-hello
+    │
+    ▼
+hello.txt
+```
+
+After deleting `hello.txt`, the path becomes invalid.
+
+The soft link becomes a **broken link**.
+
+---
+
+# Visual Representation
+
+## Hard Link
+
+```text
+hello.txt
+     │
+     ▼
+   [inode]
+     ▲
+     │
+h-hello
+```
+
+After deleting `hello.txt`:
+
+```text
+h-hello
+    │
+    ▼
+ [inode]
+```
+
+✅ Data still exists.
+
+---
+
+## Soft Link
+
+```text
+s-hello
+    │
+    ▼
+hello.txt
+    │
+    ▼
+  Data
+```
+
+After deleting `hello.txt`:
+
+```text
+s-hello
+    │
+    ▼
+hello.txt ❌ Missing
+```
+
+❌ Link breaks.
+
+---
+
+# Hard Link vs Soft Link
+
+| Feature                         | Hard Link          | Soft Link        |
+| ------------------------------- | ------------------ | ---------------- |
+| Uses inode directly             | ✅ Yes              | ❌ No             |
+| Survives original file deletion | ✅ Yes              | ❌ No             |
+| Can link directories            | ❌ No               | ✅ Yes            |
+| Can cross file systems          | ❌ No               | ✅ Yes            |
+| File type shown as              | `-`                | `l`              |
+| Stores file data                | Directly via inode | Stores file path |
+
+---
+
+# Useful Commands
+
+Create Soft Link:
+
+```bash
+ln -s hello.txt s-hello
+```
+
+Create Hard Link:
+
+```bash
+ln hello.txt h-hello
+```
+
+Show Links:
+
+```bash
+ls -l
+```
+
+Show Inode Numbers:
+
+```bash
+ls -li
+```
+
+Delete File:
+
+```bash
+rm hello.txt
+```
+
+---
+
+# Key Learning
+
+* Hard links point directly to the file inode.
+* Soft links point to the file path.
+* Hard links continue working even after the original filename is deleted.
+* Soft links break if the original file is removed.
+* `ls -l` shows `l` for symbolic links.
+* Hard links increase the file link count.
+
+
