@@ -355,3 +355,373 @@ sudo service nginx start
 * `service start` starts a service.
 * `active (running)` means the service is working.
 * `inactive (dead)` means the service is stopped.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# AWS Security Group Configuration and Accessing Nginx
+
+## Screenshot 14
+
+![EC2 Instance Summary](14.png)
+
+## Screenshot 15
+
+![Security Group](15.png)
+
+## Screenshot 16
+
+![Edit Inbound Rules](16.png)
+
+## Screenshot 17
+
+![Add HTTP Port 80 Rule](17.png)
+
+## Screenshot 18
+
+![Security Group Modified Successfully](18.png)
+
+## Screenshot 19
+
+![Copy Public IP Address](19.png)
+
+## Screenshot 20
+
+![Open Public IP in Browser](20.png)
+
+## Screenshot 21
+
+![Welcome to Nginx](21.png)
+
+---
+
+# Objective
+
+Allow HTTP traffic to the EC2 instance and access the Nginx web server from a web browser.
+
+---
+
+# Step 1: Open EC2 Instance
+
+Login to AWS Management Console.
+
+Navigate to:
+
+```text
+AWS Console
+   └── EC2
+         └── Instances
+               └── babu-anand-server
+```
+
+Select the EC2 instance:
+
+```text
+babu-anand-server
+```
+
+---
+
+# Step 2: Open Security Group
+
+From the Instance Summary page:
+
+```text
+Instance Details
+      │
+      ▼
+Security Group
+```
+
+Click the attached Security Group link.
+
+Example:
+
+```text
+sg-0f46xxxxxxxxxxxx
+```
+
+---
+
+# Step 3: Edit Inbound Rules
+
+Inside the Security Group:
+
+```text
+Security Group
+     │
+     ▼
+Inbound Rules
+     │
+     ▼
+Edit Inbound Rules
+```
+
+Click:
+
+```text
+Edit Inbound Rules
+```
+
+---
+
+# Step 4: Add HTTP Rule
+
+Click:
+
+```text
+Add Rule
+```
+
+Configure:
+
+| Setting    | Value         |
+| ---------- | ------------- |
+| Type       | HTTP          |
+| Protocol   | TCP           |
+| Port Range | 80            |
+| Source     | Anywhere IPv4 |
+| CIDR       | 0.0.0.0/0     |
+
+Configuration:
+
+```text
+Type: HTTP
+Port: 80
+Source: Anywhere IPv4
+```
+
+---
+
+# Step 5: Save Rules
+
+Click:
+
+```text
+Save Rules
+```
+
+Message:
+
+```text
+Successfully modified security group
+```
+
+### Why?
+
+HTTP traffic from the internet can now reach the EC2 instance.
+
+Before:
+
+```text
+Internet
+   │
+   ▼
+Port 80 Blocked
+```
+
+After:
+
+```text
+Internet
+   │
+   ▼
+Port 80 Allowed
+```
+
+---
+
+# Step 6: Copy Public IP Address
+
+Return to:
+
+```text
+EC2
+   └── Instances
+         └── babu-anand-server
+```
+
+Copy:
+
+```text
+Public IPv4 Address
+```
+
+Example:
+
+```text
+54.xx.xx.xx
+```
+
+---
+
+# Step 7: Open Browser
+
+Open Chrome and enter:
+
+```text
+http://PUBLIC-IP
+```
+
+Example:
+
+```text
+http://54.xx.xx.xx
+```
+
+Important:
+
+Use:
+
+```text
+http://
+```
+
+not
+
+```text
+https://
+```
+
+because Nginx is listening on port 80.
+
+---
+
+# Step 8: Verify Nginx Web Server
+
+If Nginx is running correctly, the browser displays:
+
+```text
+Welcome to nginx!
+```
+
+This confirms:
+
+* EC2 instance is running.
+* Security Group allows HTTP traffic.
+* Nginx service is running.
+* Browser can access the web server.
+
+---
+
+# Architecture Flow
+
+```text
+User Browser
+      │
+      ▼
+Public IP Address
+      │
+      ▼
+Security Group
+(Port 80 Open)
+      │
+      ▼
+EC2 Instance
+      │
+      ▼
+Nginx Service
+      │
+      ▼
+Welcome to nginx!
+```
+
+---
+
+# Verify Nginx from Server
+
+Check status:
+
+```bash
+systemctl status nginx
+```
+
+Output:
+
+```text
+Active: active (running)
+```
+
+If stopped:
+
+```bash
+sudo systemctl start nginx
+```
+
+Verify again:
+
+```bash
+systemctl status nginx
+```
+
+---
+
+# Troubleshooting
+
+### Website Not Opening
+
+Check:
+
+```bash
+systemctl status nginx
+```
+
+Nginx must be:
+
+```text
+active (running)
+```
+
+---
+
+### Port 80 Closed
+
+Verify Security Group:
+
+```text
+Inbound Rule
+Port 80
+Source 0.0.0.0/0
+```
+
+---
+
+### Wrong URL
+
+Correct:
+
+```text
+http://PUBLIC-IP
+```
+
+Wrong:
+
+```text
+https://PUBLIC-IP
+```
+
+---
+
+# Commands Summary
+
+```bash
+sudo systemctl status nginx
+
+sudo systemctl start nginx
+
+sudo systemctl stop nginx
+
+sudo systemctl restart nginx
+```
+
+---
+
+# Key Learning
+
+* Security Groups act as virtual firewalls for EC2.
+* Inbound Rules control incoming traffic.
+* Port 80 is used for HTTP.
+* Nginx is a web server that serves web pages.
+* Public IP allows internet access to the EC2 instance.
+* Opening Port 80 enables browser access to Nginx.
+* "Welcome to nginx!" confirms successful deployment.
+
